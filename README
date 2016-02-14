@@ -11,7 +11,7 @@ Structure of package.
     ./common    Source code of support library.
     ./doc       Documentation.
     ./flash     Source code of flashing tool.
-    ./lkr       Source of linker.
+    ./lkr       Source code of linker.
     ./samples   Source code of sample code, tests, demo, etc.
     ./Makefile  Main makefile.
 
