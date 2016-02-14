@@ -1,0 +1,74 @@
+;
+; Sample linker script for STM8S207C8
+;
+
+;
+; Make variables to show memory layout of our device.
+;
+FLASH_START = $8000
+FLASH_SIZE  = {64 * 1024}
+
+RAM_START   = $0000
+RAM_SIZE    = {6 * 1024}
+
+OPTIONS     = $4800
+
+.print "FLASH     " "%$" {FLASH_START} ":" {FLASH_START + FLASH_SIZE}
+.print "RAM       " "%$" {RAM_START}   ":" {RAM_START   + RAM_SIZE}
+
+;
+; Some auxiliary variables
+;
+BSS_SECTION_SIZE  = sizeof("bss")
+
+FLASH = {FLASH_START}
+RAM   = {RAM_START}
+
+;
+; Plase "text" section 
+; First address is output (LMA) address (flash memory actually).
+; Second address is address on target (VMA). They matched at this time.
+;             LMA     VMA
+.place "vectors" {FLASH} {FLASH}
+
+VECTORS_SIZE = sizeof("vectors")
+FLASH = {FLASH + VECTORS_SIZE}
+
+.place "text"    {FLASH} {FLASH}
+
+TEXT_SECTION_SIZE = sizeof("text")
+
+.fill "text" {256 - ((TEXT_SECTION_SIZE + VECTORS_SIZE) % 256)} $ff ; align to 256 bytes
+
+TEXT_SECTION_SIZE = sizeof("text")
+
+
+;
+; Plase "data" section.
+; Place it after "text" section on FLASH, but symbols will be relocated
+; to RAM.
+;
+FLASH = {FLASH + TEXT_SECTION_SIZE}
+.place "data" {FLASH} {RAM}
+
+DATA_SECTION_SIZE = sizeof("data")
+
+.place "options" {OPTIONS} {OPTIONS}
+
+
+;
+; Plase "bss" section.
+; No need to place it on FLASH. On RAM it placed after "data" section.
+;
+RAM = {RAM + DATA_SECTION_SIZE}
+.place "bss" NOLOAD {RAM}
+
+;
+; Eport stack pointer value to initialize to assembler.
+;
+STACK_TOP = {RAM_START + RAM_SIZE - 1}
+
+.print "STACK_TOP " "%$" {STACK_TOP}
+
+.export STACK_TOP 
+

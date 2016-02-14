@@ -1,0 +1,27 @@
+Introduction.
+-------------
+
+stm8mu - is a set of tools to working with STM8 microcontrollers, including
+assembler, linker and tool for flashing parts with STM8 integrated bootloader via UART.
+
+Structure of package.
+---------------------
+
+    ./asm       Source code of assembler.
+    ./common    Source code of support library.
+    ./doc       Documentation.
+    ./flash     Source code of flashing tool.
+    ./lkr       Source of linker.
+    ./samples   Source code of sample code, tests, demo, etc.
+    ./Makefile  Main makefile.
+
+Licence.
+--------
+
+Unless otherwise noted, all source code are under 2-clause BSD license.
+
+Auhtors.
+--------
+    Dmitry Kobylin <dmkoby at yandex.ru>
+
+

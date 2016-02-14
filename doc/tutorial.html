@@ -1,0 +1,193 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>STM8MU - Set of utilities for programming STM8 microcontrollers.</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="STM8 assembler, linker and flashing tool">
+        <meta name="keywords" content="STM8, assembler, STM8 assembler, STM8 assembler linux, STM8 ассемблер">
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+    </head>
+
+    <body background="img/bg.png">
+        <table class="top" align="center" valign="top">
+            <tr>
+                <td valign="top">
+                    <table border="0" cellpadding="16" cellspacing="0" width="100%" height="100%">
+                        <tr>
+                            <td class="menu" valign="top" rowspan="2">
+
+
+                                <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <tr><td class="menu0"> <a class="menu" href="index.html"   > About         </a></td></tr>
+                                    <tr><td class="menu0s"><a class="menu" href="tutorial.html"> Tutorial      </a></td></tr>
+
+                                    <tr> <td align="center" valign="bottom" height="100%">
+                                            <br><br>
+                                            <a href="https://sourceforge.net/p/stm8mu/" rel="nofollow"><img alt="Download stm8mu" src="https://sourceforge.net/sflogo.php?type=12&group_id=2630149"></a>
+                                    <tr> </td>
+                                </table>
+
+
+                            </td>
+                            <td class="content" valign="top">
+                                <p>
+                                This tutorial aims to show how to use tools, supplied by stm8mu package, to build
+                                program for STM8 MCU. For further examples and more advanced usage look at <b>samples</b> directory of package.
+                                </p>
+                                <p>Lets look at simple assembler source file.</p>
+<div class="code">1 : .print "=========================================================="
+2 : .print "File          : led.asm"
+3 : .print "Description   : Sample program for blink LED on STM8S207C8"
+4 : .print "=========================================================="
+5 : 
+6 : .define PC_ODR.w16    $00500A
+7 : .define PC_DDR.w16    $00500C
+8 : .define PC_CR1.w16    $00500D
+9 : 
+10: ; PC6
+11: .define PIN_NUM   6
+12: 
+13: .extern STACK_TOP.w16
+14: 
+15: ;********************************
+16: ;*                              *
+17: ;********************************
+18: .section "text"
+19:     jpf start
+20: start.w24:
+21:     ldw X, #STACK_TOP
+22:     ldw SP, X
+23: 
+24:     bset PC_DDR, #PIN_NUM ; Output
+25:     bset PC_CR1, #PIN_NUM ; Push-pull
+26: loop:
+27:     bset PC_ODR, #PIN_NUM
+28:     callr delay
+29:     bres PC_ODR, #PIN_NUM
+30:     callr delay
+31:     jra loop
+32: 
+33: ;********************************
+34: ;*                              *
+35: ;********************************
+36: .define DELAY_VAL_MS 500
+37: .define FCPU_HZ      {2 * 1000 * 1000}
+38: .define LOOP_LENGTH  4
+39: .define LOOPS        {FCPU_HZ * DELAY_VAL_MS / 1000 / LOOP_LENGTH}
+40: 
+41: delay:
+42:     pushw X
+43:     pushw Y
+44:     
+45:     ldw Y, #{LOOPS >> 16}.w16
+46:     ldw X, #{LOOPS & $ffff}.w16
+47: 
+48: delay_dec:
+49:     decw X
+50:     jrne delay_dec
+51:     decw Y
+52:     jrne delay_dec
+53:     
+54:     popw Y
+55:     popw X
+56:     ret
+</div>
+<p>
+At first line we can see "<b>.print</b>" directive.
+Print directive can be used to output text, values of constant symbols and expressions during assembling.
+</p>
+
+<p>
+There is "<b>.section</b>" directive at line 18. This directive submit following data/instructions to be placed at "<b>text</b>"
+section.
+</p>
+<p>
+
+To declare constant symbol you can use "<b>.define</b>" directive. Expression to define value of constant symbol can be another constant symbol,
+number or arithmetic expression enclosed in "<b>{</b>" "<b>}</b>" brackets.
+</p>
+
+<p>
+Instructions syntax are compliant to ST with little differences. Refer to <b>STM8 CPU Programming Manual (PM044)</b> for instructions syntax.
+For exact syntax supported by stm8mu_asm look at "<b>samples/asm_syntax/syntax.asm</b>" file.
+</p>
+
+<p>
+At line 20 label is defined. Label should have width attribute. Default width, if not specified, is "<b>.w8</b>",
+which is shortmem, "<b>.w16</b>" refer to longmem and "<b>.w24</b>" refer to extmem.
+</p>
+
+<p>
+To build object file from source invoke following command at command line:
+</p>
+
+<div class="sh">stm8mu_asm --output=led.l0 led.asm</div>
+
+<p>
+Assembler will create "<b>led.l0</b>" object file which contain position independent code. To make output file, suitable for programming in STM8
+memory, this object should be processed by linker. Linker must know how to place data in memory of target. This info supplied by linker-script.
+</p>
+
+<div class="code">1 : ;
+2 : ; Sample linker script for STM8S207C8
+3 : ;
+4 : 
+5 : FLASH_START = $8000
+6 : 
+7 : RAM_START   = $0000
+8 : RAM_SIZE    = {6 * 1024}
+9 : 
+10: ;              LMA           VMA
+11: .place "text"  FLASH_START   FLASH_START
+12: 
+13: STACK_TOP = {RAM_START + RAM_SIZE - 1}
+14: .export STACK_TOP
+</div>
+
+<p>
+At line 5 declared <b>FLASH_START</b> symbol. This symbol is referenced at line 11.
+</p>
+<p>
+At line 11 appeared "<b>.place</b>" directive. It is used to map section data to target memory.
+There is two addresses used in "<b>.place</b>" directive. LMA address refer to offset of section in image (flash). VMA address
+refer to offset of section in target memory.
+</p>
+<p>
+In this example LMA match VMA for "<b>text</b>" section. In more complex situations, for example,
+like "<b>data</b>" section LMA can be differ from VMA.
+</p>
+<p>
+Look at "<b>samples</b>" directory for more info about linker files.
+</p>
+
+<p>
+To build output file from object-files invoke following command at command line:
+</p>
+
+<div class="sh">stm8mu_lkr --script=led.lkr --output=led.s19 led.l0</div>
+
+<p>
+Linker will create "<b>led.s19</b>" file in motorola S-record format.
+</p>
+
+<p>
+You can use "<b>stm8mu_flash</b>" utility to program file to STM8 memory via UART. Target must contain integrated bootloader.
+</p>
+
+<div class="sh">stm8mu_flash --chip=STM8S207C8 --baud=115200 --cport=/dev/ttyUSB0 --input=led.s19 write</div>
+
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td cellpadding="0" class="copyright" align="center">
+                                Copyright &copy; 2015 Dmitry Kobylin
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
+

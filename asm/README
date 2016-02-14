@@ -1,0 +1,116 @@
+
+# Assemlber language syntax. #
+
+PROGRAM = DIRECTIVE, PROGRAM | LABEL, PROGRAM | INSTRUCTIONS, PROGRAM | COMMENT, PROGRAM | EOF
+
+DIRECTIVE = ".", SYMBOL, DIRECTIVE_ARGS, COMMENT
+DIRECTIVE_ARGS = TODO
+
+SPACE0   = " " | "\t"
+SPACE    = SPACE0, SPACE
+
+COMMENT = ";", ANYCHAR, EOL | SPACE, EOL | EOL
+ANYCHAR = ::not \n::
+
+LABEL        = SYMBOL, ":", COMMENT
+
+INSTRUCTIONS = INSTRUCTION, COMMENT | INSTRUCTION, "|", INSTRUCTIONS
+INSTRUCTION  = SYMBOL, ARGS
+ARGS = TODO
+
+EOL = "\n"
+
+NUMBER  = DEC | "$", HEX | "%", BIN | "~", OCT
+DEC0    = "0" ... "9"
+DEC     = DEC0, DEC | DEC0
+HEX0    = "a" ... "z" | "A" ... "Z"          ; XXX use only upper case?
+HEX     = "$", HEX0, HEX | "$", HEX0
+BIN0    = "0" | "1"
+BIN     = "%", BIN0, BIN | "%", BIN0
+OCT0    = "0" .. "7"
+OCT     = "@", OCT0, OCT | "~", OCT0
+
+SYMBOL     = "_", SYMBOL0 | AZ_LOW, SYMBOL0 | AZ_HIGH, SYMBOL0
+AZ_LOW     = "a" | ... | "z"
+AZ_HIGH    = "A" | ... | "Z"
+SYMBOL0    = AZ_LOW | AZ_HIGHT | DEC | SYMBOL | 0
+
+## Expressions. ##
+
+### Operator precedence. ###
+
+High to low:
+
+    1. "~"
+    2. "*", "/", "%"
+    3. "+", "-"
+    4. "<<", ">>"
+    5. "&"
+    6. "^"
+    7. "|"
+
+EXPR      = EXPR, "|", OR_OPD | OR_OPD
+OR_OPD    = OR_OPD, "^", XOR_OPD | XOR_OPD
+XOR_OPD   = XOR_OPD, "&", AND_OPD | AND_OPD
+AND_OPD   = AND_OPD, "<<", SHIFT_OPD | AND_OPD, ">>", SHIFT_OPD | SHIFT_OPD
+SHIFT_OPD = SHIFT_OPD, "+", ADD_OPD | SHIFT_OPD, "-", ADD_OPD | ADD_OPD
+ADD_OPD   = ADD_OPD, "*", MUL_OPD | ADD_OPD, "/", MUL_OPD | ADD_OPD, "%", MUL_OPD | MUL_OPD
+MUL_OPD   = "~", MUL_OPD | NOT_OPD
+NOT_OPD   = NUMBER | SYMBOL | "(", EXPR, ")"
+
+### Eliminate of left recursion. ###
+
+A  = A, a | b
+
+A  = b, AR
+AR = a, AR | 0
+
+EXPR       = OR_OPD, EXPRR
+EXPRR      = "|", OR_OPD, EXPRR | 0
+OR_OPD     = XOR_OPD, OR_OPDR
+OR_OPDR    = "^", XOR_OPD, OR_OPDR | 0
+XOR_OPD    = AND_OPD, XOR_OPDR
+XOR_OPDR   = "&", AND_OPD, XOR_OPDR | 0
+AND_OPD    = SHIFT_OPD, AND_OPDR
+AND_OPDR   = "<<", SHIFT_OPD, AND_OPDR | ">>", SHIFT_OPD, AND_OPDR | 0
+SHIFT_OPD  = ADD_OPD, SHIFT_OPDR
+SHIFT_OPDR = "+", ADD_OPD, SHIFT_OPDR | "-", ADD_OPD, SHIFT_OPDR | 0
+ADD_OPD    = MUL_OPD, ADD_OPDR
+ADD_OPDR   = "*", MUL_OPD, ADD_OPDR | "/", MUL_OPD, ADD_OPDR |"%", MUL_OPD, ADD_OPDR | 0
+MUL_OPD    = "~", MUL_OPD | NOT_OPD
+NOT_OPD    = NUMBER | SYMBOL | "(", EXPR, ")"
+
+## Symbols attributes ##
+
+TODO
+
+## Instructions ##
+
+PM044 Example   |  Direct Form  |  With symbols
+-----------------------------------------------
+
+# TODO for assembler #
+    * Structure definition - symbol resolution similar to constexpr.
+      LDW X, #:STRUCT1::MEMBER1
+
+# TODO for this document #
+    * Strict follow to EBNF to describe syntax of assembler.
+
+# Output file (l0) #
+
+## Relocations table ##
+
+SECTION_NAME, OFFSET, WIDTH, SYMBOL_NAME
+
+Linker: replace data (WIDTH wide) on SECTION:OFFSET with value of SYMBOL
+
+## Symbols table ##
+
+SYMBOL_NAME, SECTION_NAME, OFFSET
+
+## Data ##
+
+SECTION_NAME, SECTION_LENGTH, DATA
+
+
+

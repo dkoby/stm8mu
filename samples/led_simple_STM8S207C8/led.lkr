@@ -1,0 +1,14 @@
+;
+; Sample linker script for STM8S207C8
+;
+
+FLASH_START = $8000
+
+RAM_START   = $0000
+RAM_SIZE    = {6 * 1024}
+
+;              LMA           VMA
+.place "text"  FLASH_START   FLASH_START
+
+STACK_TOP = {RAM_START + RAM_SIZE - 1}
+.export STACK_TOP 
