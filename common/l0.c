@@ -175,8 +175,6 @@ int l0_save(char *fpath,
             goto error;
         }
 
-        pbuf = bmem.buf;
-
         length  = sizeof(struct l0_block_info_t);
         length += sizeof(struct l0_symbol_block_t);
         length += strlen(s->name) + 1;
@@ -184,6 +182,8 @@ int l0_save(char *fpath,
 
         if (bmem_alloc(&bmem, length) < 0)
             goto error;
+
+        pbuf = bmem.buf;
 
         /* make iblock */
         {
@@ -239,8 +239,6 @@ int l0_save(char *fpath,
 
         r = ll->p;
 
-        pbuf = bmem.buf;
-
         length  = sizeof(struct l0_block_info_t);
         length += sizeof(struct l0_relocation_block_t);
         length += strlen(r->symbol)  + 1;
@@ -248,6 +246,8 @@ int l0_save(char *fpath,
 
         if (bmem_alloc(&bmem, length) < 0)
             goto error;
+
+        pbuf = bmem.buf;
 
         /* make iblock */
         {
@@ -307,8 +307,6 @@ int l0_save(char *fpath,
         if (s->length == 0)
             continue;
 
-        pbuf = bmem.buf;
-
         length  = sizeof(struct l0_block_info_t);
         length += sizeof(struct l0_section_block_t);
         length += strlen(s->name) + 1;
@@ -317,6 +315,8 @@ int l0_save(char *fpath,
 
         if (bmem_alloc(&bmem, length) < 0)
             goto error;
+
+        pbuf = bmem.buf;
 
         /* make iblock */
         {
