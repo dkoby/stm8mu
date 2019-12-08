@@ -235,7 +235,7 @@ static void _print_symbols(struct symbols_t *symbols)
         }
         printf(", width %u", s->width);
         printf(", export %u", s->exp);
-        printf(", value 0x%06llX (%lld)", s->val64, s->val64);
+        printf(", value 0x%06llX (%lld)", (long long int)s->val64, (long long int)s->val64);
         printf(" \"%s\"", s->name);
         if (s->section)
             printf(", section \"%s\"", s->section);
@@ -848,7 +848,7 @@ static void _patch_sections(struct linker_context_t *ctx)
                 {
                     debug_emsgf("Symbol jump too long",
                             "\"%s\", symbol VMA 0x%06llX, relocation vma 0x%06X, jump %lld" NL,
-                            symbol->name, symbol->offset, (rsection->vma + relocation->offset + relocation->adjust), jump);
+                            symbol->name, (long long int)symbol->offset, (rsection->vma + relocation->offset + relocation->adjust), (long long int)jump);
                     app_close(APP_EXITCODE_ERROR);
                 }
 

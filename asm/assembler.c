@@ -166,7 +166,7 @@ void assembler_print_result(struct asm_context_t *ctx)
             printf(" \"%s\"", s->name);
             printf(", width %u", s->width);
             printf(", export %u", s->exp);
-            printf(", value %06llX (%lld)", s->val64, s->val64);
+            printf(", value %06llX (%lld)", (long long int)s->val64, (long long int)s->val64);
             if (s->section)
                 printf(", section \"%s\"", s->section);
 
