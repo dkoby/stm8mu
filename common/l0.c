@@ -160,6 +160,8 @@ int l0_save(char *fpath,
         char *section;
         char nosection[1];
 
+        nosection[0] = 0;
+
         s = ll->p;
         if (s->type != SYMBOL_TYPE_LABEL && s->type != SYMBOL_TYPE_EXTERN)
             continue;
