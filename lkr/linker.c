@@ -458,7 +458,7 @@ static void _add_relocation(struct linker_context_t *ctx, struct linker_file_dat
         if (r->length != s->width)
         {
             /* NOTREACHED */
-            debug_emsgf("Relocation mismatch symbol width", "\"%s\"", s->name);
+            debug_emsgf("Relocation mismatch symbol width", "\"%s\""NEW_LINE, s->name);
             app_close(APP_EXITCODE_ERROR);
         }
 

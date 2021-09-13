@@ -647,6 +647,7 @@ static int _lang_db(struct asm_context_t *ctx, struct token_t *token, int width)
             if (s->type == SYMBOL_TYPE_CONST)
             {
                 value = s->val64;
+                _cutvalue(ctx, (uint64_t*)&value, width);
             } else if (s->type == SYMBOL_TYPE_LABEL || s->type == SYMBOL_TYPE_EXTERN) {
                 /*
                  * XXX
