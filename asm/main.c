@@ -81,8 +81,6 @@ static void _sigact(int sig, siginfo_t *sinf, void *context)
  */
 static void app_init(int argc, char** argv)
 {
-    _print_head();
-
     /* hook signal handler */
     {
         struct sigaction act;
@@ -174,6 +172,8 @@ static void _print_head()
  */
 static void _print_help(int argc, char **argv)
 {
+    _print_head();
+
     printf("Usage: %s <OPTIONS> <INPUT_FILE>"NL, argv[0]);
     printf(NL);
     printf("OPTIONS:"NL);

@@ -74,14 +74,18 @@ void linker_run()
     while (app.innum--)
         _load_file(ctx, *app.infiles++);
 
+#if 0
     printf("Link" NL);
+#endif
     _glue_sections(ctx);
     _lscript(ctx);
     _patch_sections(ctx);
 
     if (*app.outputfile)
     {
+#if 0
         printf("Write %s" NL, app.outputfile);
+#endif
         _write_srec(ctx, app.outputfile);
     }
 
@@ -154,7 +158,9 @@ static void _load_file(struct linker_context_t *ctx, char *path)
     fname = NULL;
     fd    = NULL;
 
+#if 0
     printf("Load file \"%s\"" NL, path);
+#endif
 
     /* remove path from file name */
     {
