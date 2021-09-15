@@ -1,7 +1,7 @@
 /*
  *     Set of utilities for programming STM8 microcontrollers.
  *
- * Copyright (c) 2015, Dmitry Kobylin
+ * Copyright (c) 2015-2021, Dmitry Kobylin
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without

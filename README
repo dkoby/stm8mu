@@ -1,8 +1,8 @@
 Introduction.
 -------------
 
-stm8mu - is a set of tools to working with STM8 microcontrollers, including
-assembler, linker and tool for flashing parts with STM8 integrated bootloader via UART.
+stm8mu - is a set of utilities for working with STM8 microcontrollers, including
+assembler, linker and tool for flashing parts by STM8 integrated bootloader via UART.
 
 Structure of package.
 ---------------------
