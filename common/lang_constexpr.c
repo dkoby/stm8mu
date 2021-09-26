@@ -26,6 +26,7 @@
  * 
  */
 
+#include <string.h>
 /* */
 #include <debug.h>
 #include <lang_util.h>
@@ -435,13 +436,21 @@ static void _not_opd(struct symbols_t *sl, struct token_t *token)
 
         _exprstack_push(value);
     } else if ((tname = token_get(token, TOKEN_TYPE_SYMBOL, TOKEN_NEXT))) {
+        char name[TOKEN_STRING_MAX];
         struct symbol_t *s;
         int64_t value;
 
-        s = symbol_get_const(sl, tname, &value);
+        strcpy(name, tname);
+        if (lang_util_question_expand(sl, name) < 0)
+        {
+            token_print_rollback(token);
+            app_close(APP_EXITCODE_ERROR);
+        }
+
+        s = symbol_get_const(sl, name, &value);
         if (!s)
         {
-            debug_emsgf("Symbol not found", "%s" NL, tname);
+            debug_emsgf("Symbol not found", "%s" NL, name);
             token_print_rollback(token);
             app_close(APP_EXITCODE_ERROR);
         }

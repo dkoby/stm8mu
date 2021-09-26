@@ -153,6 +153,7 @@ static struct symbol_t * _symbol_create(char *name)
     s->section  = NULL;
     s->val64    = 0;
     s->name     = malloc(strlen(name) + 1);
+    s->attr     = NULL;
     if (!s->name)
         goto error;
     strcpy(s->name, name);
@@ -298,6 +299,22 @@ void symbol_set_attr(struct symbol_t *s, char *name, char *value)
         else {
             debug_emsg("Invalid value of width attribute");
             goto error;
+        }
+    }
+
+    {
+        struct llist_t *ll;
+        struct symbol_attr_t *attr;
+
+        for (ll = s->attr; ll; ll = ll->next)
+        {
+            attr = ll->p;
+
+            if (attr->name && strcmp(attr->name, name) == 0)
+            {
+                s->attr = llist_remove(s->attr, ll);
+                break;
+            }
         }
     }
 

@@ -70,21 +70,28 @@ int lang_label(struct asm_context_t *ctx, struct token_t *token)
     char name[TOKEN_STRING_MAX];
     char attr[TOKEN_STRING_MAX];
     struct symbol_t *s;
+    int islocal;
 
+    islocal = 0;
     if (!(tname = token_get(token, TOKEN_TYPE_SYMBOL, TOKEN_CURRENT)))
         return -1;
 
-    s = symbol_find(&ctx->symbols, tname);
+    strcpy(name, tname);
+    if (*name == '?')
+        islocal = 1;
+    if (lang_util_question_expand(&ctx->symbols, name) < 0)
+        goto error;
+
+    s = symbol_find(&ctx->symbols, name);
     if (s)
     {
         if ((s->type == SYMBOL_TYPE_LABEL && ctx->pass == 0) ||
             s->type != SYMBOL_TYPE_LABEL)
         {
-            debug_emsgf("Symbol already exists", "%s" NL, tname);
+            debug_emsgf("Symbol already exists", "%s" NL, name);
             goto error;
         }
     }
-    strcpy(name, tname);
 
     *attr = 0;
     if (!token_get(token, TOKEN_TYPE_DOT, TOKEN_NEXT))
@@ -132,6 +139,19 @@ int lang_label(struct asm_context_t *ctx, struct token_t *token)
         goto error;
     }
 
+    if (!islocal)
+    {
+        struct symbol_t *slabel;
+
+        slabel = symbol_find(&ctx->symbols, SYMBOL_CURRENT_LABEL);
+        if (!slabel)
+        {
+            slabel = symbols_add(&ctx->symbols, SYMBOL_CURRENT_LABEL);
+            slabel->type = SYMBOL_TYPE_NONE;
+        }
+        symbol_set_attr(slabel, "value", name);
+    }
+
     return 0;
 error:
     token_print_rollback(token);
@@ -173,6 +193,8 @@ int lang_directive(struct asm_context_t *ctx, struct token_t *token)
             goto error;
         }
         strcpy(name, tname);
+        if (lang_util_question_expand(&ctx->symbols, name) < 0)
+            goto error;
 
         if (symbol_find(&ctx->symbols, name))
         {

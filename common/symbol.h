@@ -69,6 +69,8 @@ struct symbols_t {
 
 //#define SYMBOL_WIDTH_DEFAULT   SYMBOL_WIDTH_SHORT
 
+#define SYMBOL_CURRENT_LABEL    "##current_label##"
+
 void symbols_init(struct symbols_t *sl);
 void symbols_destroy(struct symbols_t *sl);
 struct symbol_t *symbols_add(struct symbols_t *sl, char *name);

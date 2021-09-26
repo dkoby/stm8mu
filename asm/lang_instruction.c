@@ -201,6 +201,7 @@ enum {
 static int _get_arg(struct asm_context_t *ctx, struct arg_t *arg, struct token_t *token)
 {
     char *tname;
+    char name[TOKEN_STRING_MAX];
     struct symbol_t *symbol;
     int64_t value;
 
@@ -226,7 +227,11 @@ static int _get_arg(struct asm_context_t *ctx, struct arg_t *arg, struct token_t
         else if (strcmp(tname, "CC") == 0)
             arg->type = ARG_TYPE_CC;
         else {
-            symbol = symbol_find(&ctx->symbols, tname);
+            strcpy(name, tname);
+            if (lang_util_question_expand(&ctx->symbols, name) < 0)
+                return GETARG_RESULT_ERROR;
+
+            symbol = symbol_find(&ctx->symbols, name);
             if (symbol)
             {
                 if (symbol->type == SYMBOL_TYPE_CONST) {
@@ -236,7 +241,7 @@ static int _get_arg(struct asm_context_t *ctx, struct arg_t *arg, struct token_t
                 } else if (symbol->type == SYMBOL_TYPE_LABEL) {
                     arg->symbol = symbol;
                 } else {
-                    debug_emsgf("Symbol should be extern or label", "%s" NL, tname);
+                    debug_emsgf("Symbol should be extern or label", "%s" NL, name);
                     return GETARG_RESULT_ERROR;
                 }
                 /* 
@@ -252,11 +257,11 @@ static int _get_arg(struct asm_context_t *ctx, struct arg_t *arg, struct token_t
                     arg->type = ARG_TYPE_EXTMEM;
                 } else {
                     /* NOTREACHED */
-                    debug_emsgf("Unknown symbol width", "%s %u" NL, tname, symbol->width);
+                    debug_emsgf("Unknown symbol width", "%s %u" NL, name, symbol->width);
                     return GETARG_RESULT_ERROR;
                 }
             } else {
-                debug_emsgf("Symbol not found", "\"%s\"" NL, tname);
+                debug_emsgf("Symbol not found", "\"%s\"" NL, name);
                 return GETARG_RESULT_ERROR;
             }
         }

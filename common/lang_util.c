@@ -31,6 +31,7 @@
 #include <debug.h>
 #include <token.h>
 #include <app_common.h>
+#include "lang_util.h"
 
 /*
  *
@@ -234,4 +235,52 @@ void lang_util_num2str(int64_t num, enum token_number_format_t format, char *st)
 
     *st = 0;
 }
+
+/*
+ *
+ */
+int lang_util_question_expand(struct symbols_t *symbols, char *name)
+{
+    struct symbol_t *slabel;
+    size_t lname;
+    size_t lexp;
+    char *expand;
+
+    if (*name != '?')
+        return 0;
+
+    if (strlen(name) >= (TOKEN_STRING_MAX - 2))
+    {
+        debug_emsg("Question-symbol too long");
+        return -1;
+    }
+
+    slabel = symbol_find(symbols, SYMBOL_CURRENT_LABEL);
+    if (!slabel)
+    {
+        debug_emsg("Question-symbol not within label");
+        return -1;
+    }
+
+    expand = symbol_get_attr(slabel, "value");
+    if (!expand)
+    {
+        debug_emsgf("", "%s has no \"value\" attribute"NEW_LINE, SYMBOL_CURRENT_LABEL);
+        return -1;
+    }
+
+    lname = strlen(name);
+    lexp  = strlen(expand);
+    if ((lexp + lname  + 1) >= TOKEN_STRING_MAX)
+    {
+        debug_emsg("Question-symbol too long");
+        return -1;
+    }
+    memmove(&name[lexp], name, lname);
+    memcpy(name, expand, lexp);
+    name[lexp + lname] = 0;
+
+    return 0;
+}
+
 

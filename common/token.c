@@ -204,7 +204,7 @@ char *token_get(struct token_t *token, enum token_type_t type, int whence)
             if (tlength == 0)
             {
                 if (!(
-                        (*ch == '_') || (*ch >= 'a' && *ch <= 'z') || (*ch >= 'A' && *ch <= 'Z')))
+                        (*ch == '_') || (*ch == '?') || (*ch >= 'a' && *ch <= 'z') || (*ch >= 'A' && *ch <= 'Z')))
                     return NULL;
             } else {
                 if (!(
@@ -392,7 +392,8 @@ char *token_get(struct token_t *token, enum token_type_t type, int whence)
                 type == TOKEN_TYPE_BRACKET_OPEN ||
                 type == TOKEN_TYPE_BRACKET_CLOSE ||
                 type == TOKEN_TYPE_ROUND_OPEN ||
-                type == TOKEN_TYPE_ROUND_CLOSE
+                type == TOKEN_TYPE_ROUND_CLOSE ||
+                type == TOKEN_TYPE_QUESTION
                 )
             {
                 char cmp;
@@ -412,6 +413,7 @@ char *token_get(struct token_t *token, enum token_type_t type, int whence)
                     case TOKEN_TYPE_BRACKET_CLOSE: cmp = ']'; break;
                     case TOKEN_TYPE_ROUND_OPEN:    cmp = '('; break;
                     case TOKEN_TYPE_ROUND_CLOSE:   cmp = ')'; break;
+                    case TOKEN_TYPE_QUESTION:      cmp = '?'; break;
                     case TOKEN_TYPE_OR:            cmp = '|'; break;
                     case TOKEN_TYPE_XOR:           cmp = '^'; break;
                     case TOKEN_TYPE_AND:           cmp = '&'; break;

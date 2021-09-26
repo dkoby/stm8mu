@@ -30,10 +30,12 @@
 
 /* */
 #include <types.h>
+#include "symbol.h"
 #include "token.h"
 
 int lang_util_str2num(char *sdata, int64_t *value);
 void lang_util_num2str(int64_t num, enum token_number_format_t format, char *st);
+int lang_util_question_expand(struct symbols_t *symbols, char *name);
 
 #endif
 
