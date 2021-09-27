@@ -955,3 +955,42 @@ somefunction:
 .export somefunction
 .export data_samples_24bit
 
+;
+; Local symbols.
+;
+.print "==== Test local symbols ===="
+
+delay:
+    dec A
+    ret
+
+test_local1:
+.define ?DELAY1 {50}
+.define ?DELAY2 {?DELAY1 + 50}
+
+.print "?DELAY1 = " {?DELAY1}
+.print "?DELAY2 = " {?DELAY2}
+
+    ld A, #{?DELAY1}
+?d1:
+    tnz A | jrne ?d1
+
+    ld A, #?DELAY2
+?d2:
+    tnz A | jrne ?d2
+    
+test_local2:
+.define ?DELAY1 {100}
+.define ?DELAY2 {?DELAY1 + 100}
+
+.print "?DELAY1 = " {?DELAY1}
+.print "?DELAY2 = " {?DELAY2}
+
+    ld A, #{?DELAY1}
+?d1:
+    tnz A | jrne ?d1
+
+    ld A, #?DELAY2
+?d2:
+    tnz A | jrne ?d2
+
