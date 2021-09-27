@@ -156,6 +156,9 @@ void assembler_print_result(struct asm_context_t *ctx)
             struct symbol_attr_t *a;
             struct llist_t *lla;
 
+            if (s->type == SYMBOL_TYPE_NONE)
+                continue;
+
             switch (s->type)
             {
                 case SYMBOL_TYPE_CONST:  printf("CONST"); break;

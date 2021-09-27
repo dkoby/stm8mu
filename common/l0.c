@@ -163,6 +163,10 @@ int l0_save(char *fpath,
         nosection[0] = 0;
 
         s = ll->p;
+
+        if (s->type == SYMBOL_TYPE_NONE)
+            continue;
+
         if (s->type != SYMBOL_TYPE_LABEL && s->type != SYMBOL_TYPE_EXTERN)
             continue;
 

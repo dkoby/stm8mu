@@ -232,6 +232,8 @@ static void _print_symbols(struct symbols_t *symbols)
     symbols_mkloop(symbols, &loop);
     while ((s = symbols_next(&loop)))
     {
+        if (s->type == SYMBOL_TYPE_NONE)
+            continue;
         switch (s->type)
         {
             case SYMBOL_TYPE_CONST:  printf("CONST"); break;
