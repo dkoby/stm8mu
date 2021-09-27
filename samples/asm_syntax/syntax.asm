@@ -973,11 +973,11 @@ test_local1:
 
     ld A, #{?DELAY1}
 ?d1:
-    tnz A | jrne ?d1
+    callr delay | tnz A | jrne ?d1
 
     ld A, #?DELAY2
 ?d2:
-    tnz A | jrne ?d2
+    callr delay | tnz A | jrne ?d2
     
 test_local2:
 .define ?DELAY1 {100}
@@ -988,9 +988,9 @@ test_local2:
 
     ld A, #{?DELAY1}
 ?d1:
-    tnz A | jrne ?d1
+    callr delay | tnz A | jrne ?d1
 
     ld A, #?DELAY2
 ?d2:
-    tnz A | jrne ?d2
+    callr delay | tnz A | jrne ?d2
 
