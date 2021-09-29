@@ -98,6 +98,8 @@ int assembler(struct asm_context_t *ctx, char *infile)
     token = token_new(&ctx->tokens);
     token_prepare(token, infile);
 
+    symbol_drop(&ctx->symbols, SYMBOL_CURRENT_LABEL);
+
     while (1)
     {
         token_drop(token);

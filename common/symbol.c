@@ -139,6 +139,29 @@ struct symbol_t *symbol_find(struct symbols_t *sl, char *name)
 
     return NULL;
 }
+/*
+ *
+ */
+void symbol_drop(struct symbols_t *sl, char *name)
+{
+    struct llist_t *ll;
+    struct symbol_t *s;
+
+    if (!sl)
+        return;
+
+    for (ll = sl->first; ll; ll = ll->next)
+    {
+        s = ll->p;
+        if (strcmp(s->name, name) == 0)
+        {
+            sl->first = llist_remove(sl->first, ll);
+            break;
+        }
+    }
+
+    return;
+}
 
 /*
  *

@@ -75,6 +75,7 @@ void symbols_init(struct symbols_t *sl);
 void symbols_destroy(struct symbols_t *sl);
 struct symbol_t *symbols_add(struct symbols_t *sl, char *name);
 struct symbol_t *symbol_find(struct symbols_t *sl, char *name);
+void symbol_drop(struct symbols_t *sl, char *name);
 
 void symbol_set_const(struct symbol_t *s, int64_t value);
 struct symbol_t *symbol_get_const(struct symbols_t *sl, char *name, int64_t *value);
